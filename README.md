@@ -7,8 +7,8 @@ Static one-page careers site for the Media Buyer role (HTML/CSS/JS, no build ste
 
 ## How it works
 On submit the form posts the answers to a Google Apps Script web app that appends a row to a Google Sheet
-(`SHEET_ENDPOINT` in `index.html`). The result panel also offers a prefilled WhatsApp message to
-`https://wa.me/966590873178` (`WHATSAPP` constant). While `SHEET_ENDPOINT` is empty, only the WhatsApp flow is used.
+(`SHEET_ENDPOINT` in `index.html`). The applicant then sees a thank-you screen only, and receives a branded
+confirmation email sent by the Apps Script. No contact number is shown anywhere on the page.
 
 The Apps Script code and setup steps live in the `Magmafy-Applicants` repo (`apps-script/Code.gs`).
 

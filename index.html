@@ -217,7 +217,7 @@ footer { padding: 36px 0 48px; color: var(--faint); font-size: 14px; }
       <h2>خطوات التقديم</h2>
       <ol class="steps">
         <li><strong>جاوب على الأسئلة</strong>الفورم تحت، حوالي ١٠ دقايق.</li>
-        <li><strong>ابعت الطلب</strong>بضغطة زر، ولو حبيت تبعته كمان على واتساب مع ملف الـ CV.</li>
+        <li><strong>ابعت الطلب</strong>بضغطة زر، وهيوصلك إيميل بتأكيد الاستلام.</li>
         <li><strong>نراجع ونرد عليك</strong>المرشحين المناسبين نكلّمهم لمقابلة قصيرة.</li>
       </ol>
     </div>
@@ -242,6 +242,11 @@ footer { padding: 36px 0 48px; color: var(--faint); font-size: 14px; }
             <label for="phone">رقم الواتساب</label>
             <input type="tel" id="phone" name="phone" dir="ltr" placeholder="+20 ..." autocomplete="tel" required>
           </div>
+        </div>
+        <div class="field">
+          <label for="email">الإيميل</label>
+          <input type="email" id="email" name="email" dir="ltr" placeholder="name@example.com" autocomplete="email" maxlength="254" required>
+          <span class="hint">هنبعتلك عليه رسالة تأكيد إننا استلمنا طلبك.</span>
         </div>
         <div class="row2">
           <div class="field">
@@ -299,7 +304,7 @@ footer { padding: 36px 0 48px; color: var(--faint); font-size: 14px; }
         <div class="field">
           <label for="cv">رابط الـ CV (Drive أو PDF)</label>
           <input type="url" id="cv" name="cv" dir="ltr" placeholder="https://..." required>
-          <span class="hint">اضبط صلاحية الرابط على «أي شخص لديه الرابط»، وابعت الملف نفسه كمان في واتساب لو حبيت.</span>
+          <span class="hint">اضبط صلاحية الرابط على «أي شخص لديه الرابط».</span>
         </div>
         <div class="field">
           <label for="work">رابط نتائجك السابقة (Drive أو PDF)</label>
@@ -334,15 +339,9 @@ footer { padding: 36px 0 48px; color: var(--faint); font-size: 14px; }
         <div><button class="btn" type="submit" id="submitBtn">إرسال الطلب</button></div>
       </form>
 
-      <div id="result" aria-live="polite">
-        <h3 id="resTitle">رسالتك جاهزة</h3>
-        <p id="resText">راجع الإجابات، ثم افتح واتساب وأرسلها.</p>
-        <pre id="msg"></pre>
-        <div class="cta-row">
-          <a class="btn" id="waLink" href="#" target="_blank" rel="noopener">إرسال الإجابات على واتساب</a>
-          <button class="btn ghost" type="button" id="copyBtn">نسخ الإجابات</button>
-        </div>
-        <p class="hint" id="copyNote" style="color:var(--faint);font-size:14px;margin-top:10px"></p>
+      <div id="result" aria-live="polite" tabindex="-1">
+        <h3 id="resTitle">وصلنا طلبك، شكرًا لك</h3>
+        <p id="resText">شكرًا لوقتك واهتمامك بالانضمام لفريق Magmafy. لو بياناتك محققة المطلوب هنتواصل معاك في أقرب وقت. وهتوصلك رسالة تأكيد على إيميلك.</p>
       </div>
       </div>
     </div>
@@ -350,29 +349,19 @@ footer { padding: 36px 0 48px; color: var(--faint); font-size: 14px; }
 </main>
 
 <footer>
-  <div class="wrap">© Magmafy. بياناتك تُستخدم لأغراض التوظيف فقط. للاستفسار على واتساب: <span class="ltr" dir="ltr">+966 59 087 3178</span></div>
+  <div class="wrap">© Magmafy. بياناتك تُستخدم لأغراض التوظيف فقط.</div>
 </footer>
 
 <script>
 (function () {
-  var WHATSAPP = '966590873178'; // رقم الواتساب، غيّره هنا لو لزم
-  // رابط Web app الناتج من Google Apps Script (ينتهي بـ /exec). اتركه فارغًا لو الشيت لسه مش مربوط.
+  // رابط Web app الناتج من Google Apps Script (ينتهي بـ /exec).
   var SHEET_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxc4np4V7RqtRUjoGG57SXt-ey-WyUH1JyuTFPe8CRgoIeTrpATdq-3vtv_1boBvuaXoA/exec';
   var form = document.getElementById('form');
   var result = document.getElementById('result');
-  var msgEl = document.getElementById('msg');
-  var waLink = document.getElementById('waLink');
-  var copyBtn = document.getElementById('copyBtn');
-  var copyNote = document.getElementById('copyNote');
   var formErr = document.getElementById('formErr');
 
-  var labels = [
-    ['name', 'الاسم'], ['phone', 'واتساب'], ['country', 'البلد'], ['years', 'سنوات الخبرة'],
-    ['platforms', 'المنصات'], ['spend', 'أعلى ميزانية شهرية'], ['niche', 'خبرة الأثاث والديكور والمتاجر'],
-    ['gulf', 'خبرة السوق الخليجي'], ['result', 'أفضل نتيجة'], ['tracking', 'التأكد من التتبع'],
-    ['drop', 'أول ٣ فحوصات عند هبوط الأداء'], ['cv', 'رابط الـ CV'], ['work', 'رابط النتائج السابقة'],
-    ['avail', 'موعد البدء'], ['rate', 'المقابل المتوقع'], ['more', 'ملاحظات']
-  ];
+  var fields = ['name', 'phone', 'email', 'country', 'years', 'platforms', 'spend', 'niche', 'gulf', 'result',
+    'tracking', 'drop', 'cv', 'work', 'avail', 'rate', 'more'];
 
   function val(name) {
     if (name === 'platforms') {
@@ -380,6 +369,13 @@ footer { padding: 36px 0 48px; color: var(--faint); font-size: 14px; }
     }
     var el = form.elements[name];
     return el ? el.value.trim() : '';
+  }
+
+  function showThanks() {
+    document.getElementById('form').hidden = true;
+    result.classList.add('show');
+    result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    result.focus({ preventScroll: true });
   }
 
   form.addEventListener('submit', function (e) {
@@ -397,38 +393,23 @@ footer { padding: 36px 0 48px; color: var(--faint); font-size: 14px; }
         if (bad.indexOf(el) === -1) bad.push(el);
       }
     });
+    var em = form.elements.email;
+    if (em.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em.value.trim())) {
+      em.classList.add('invalid');
+      if (bad.indexOf(em) === -1) bad.push(em);
+    }
     if (!val('platforms')) {
       bad.push(form.querySelector('input[name=platforms]'));
     }
     if (bad.length) {
-      formErr.textContent = 'في حقول ناقصة أو روابط غير صحيحة. الروابط لازم تبدأ بـ https:// وتأكد من اختيار منصة واحدة على الأقل.';
+      formErr.textContent = 'في حقول ناقصة أو غير صحيحة. تأكد من الإيميل، والروابط لازم تبدأ بـ https://، واختار منصة واحدة على الأقل.';
       bad[0].focus();
       return;
     }
     formErr.textContent = '';
-    var lines = ['طلب تقديم: وظيفة ميديا باير في Magmafy', ''];
-    labels.forEach(function (p) {
-      var v = val(p[0]);
-      if (v) lines.push('• ' + p[1] + ': ' + v);
-    });
-    var text = lines.join('\n');
-    msgEl.textContent = text;
-    waLink.href = 'https://wa.me/' + WHATSAPP + '?text=' + encodeURIComponent(text);
-
-    function showResult(title, body) {
-      document.getElementById('resTitle').textContent = title;
-      document.getElementById('resText').textContent = body;
-      result.classList.add('show');
-      result.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    if (!SHEET_ENDPOINT) {
-      showResult('رسالتك جاهزة', 'راجع الإجابات، ثم افتح واتساب وأرسلها. لم يُرسل أي شيء بعد.');
-      return;
-    }
 
     var payload = {};
-    labels.forEach(function (p) { payload[p[0]] = val(p[0]); });
+    fields.forEach(function (n) { payload[n] = val(n); });
     payload.website = form.elements.website.value;
     var btn = document.getElementById('submitBtn');
     btn.disabled = true;
@@ -441,14 +422,14 @@ footer { padding: 36px 0 48px; color: var(--faint); font-size: 14px; }
       referrerPolicy: 'no-referrer'
     }).then(function (r) { return r.json(); }).then(function (j) {
       if (j && j.ok) {
-        showResult('وصلنا طلبك', 'سنراجع إجاباتك ونرد عليك. تقدر كمان تبعتها على واتساب مع ملف الـ CV، فده بيسرّع المراجعة.');
+        showThanks();
       } else if (j && j.error === 'closed') {
         applyClosed(true);
       } else {
-        showResult('لم يصلنا طلبك', 'حصلت مشكلة أثناء الإرسال. حاول تاني بعد شوية، أو ابعت الإجابات من الزر التالي على واتساب.');
+        formErr.textContent = 'حصلت مشكلة أثناء الإرسال. حاول تاني بعد شوية.';
       }
     }).catch(function () {
-      showResult('لم نتأكد من وصول طلبك', 'تأكد من الإنترنت وحاول تاني، أو ابعت الإجابات من الزر التالي على واتساب.');
+      formErr.textContent = 'لم نتأكد من وصول طلبك. تأكد من الإنترنت وحاول تاني.';
     }).then(function () {
       btn.disabled = false;
       btn.textContent = 'إرسال الطلب';
@@ -478,13 +459,6 @@ footer { padding: 36px 0 48px; color: var(--faint); font-size: 14px; }
       .catch(function () {});
   }
 
-  copyBtn.addEventListener('click', function () {
-    var text = msgEl.textContent;
-    function done(ok) { copyNote.textContent = ok ? 'تم النسخ.' : 'تعذّر النسخ تلقائيًا. حدّد النص أعلاه وانسخه يدويًا.'; }
-    try {
-      navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(false); });
-    } catch (err) { done(false); }
-  });
 })();
 </script>
 </body>
