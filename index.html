@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#0e0716">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src https://script.google.com https://script.googleusercontent.com; base-uri 'none'; form-action 'none'">
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
@@ -124,6 +126,11 @@ input[dir=ltr], .ltr { direction: ltr; text-align: left; }
 
 footer { padding: 36px 0 48px; color: var(--faint); font-size: 14px; }
 
+.closed-strip { margin-top: 26px; border: 1px solid var(--pink); background: rgba(214, 41, 118, 0.14); border-radius: 14px; padding: 14px 18px; }
+.closed-box { background: var(--bg-2); border: 1px solid var(--border-strong); border-radius: var(--radius); padding: clamp(22px, 5vw, 40px); text-align: center; }
+.closed-box h2 { font-size: clamp(24px, 4vw, 32px); margin-bottom: 12px; }
+.closed-box p { color: var(--muted); max-width: 46ch; margin: 0 auto; }
+[hidden] { display: none !important; }
 @media (max-width: 800px) {
   .hero .wrap { grid-template-columns: 1fr; }
   .row2 { grid-template-columns: 1fr; }
@@ -139,7 +146,7 @@ footer { padding: 36px 0 48px; color: var(--faint); font-size: 14px; }
       <img src="logo-mark.webp" alt="" width="44" height="44">
       <span class="grad-text">Magmafy</span>
     </a>
-    <span class="chip">نحن نوظّف</span>
+    <span class="chip" id="hiringChip">نحن نوظّف</span>
   </div>
 </header>
 
@@ -150,8 +157,11 @@ footer { padding: 36px 0 48px; color: var(--faint); font-size: 14px; }
         <p class="eyebrow">Magmafy، وكالة نمو لمعارض الأثاث والديكور</p>
         <h1>ندوّر على <span class="grad-text">ميديا باير</span> يحوّل الإنفاق الإعلاني إلى مبيعات.</h1>
         <p class="lead">هتدير حملات إعلانية لعملاء من معارض الأثاث والديكور في السعودية والخليج. شغل بأرقام واضحة: كل ريال يُصرف له هدف، وكل حملة لها تقرير.</p>
-        <div class="cta-row">
-          <a class="btn" href="#apply">قدّم الآن</a>
+        <div class="closed-strip" id="closedStrip" hidden>
+          <b>اكتفينا حاليًا من التقديم.</b> انتظر منا أي إعلان جديد عن التوظيف.
+        </div>
+        <div class="cta-row" id="ctaRow">
+          <a class="btn" id="applyCta" href="#apply">قدّم الآن</a>
           <a class="btn ghost" href="#role">تفاصيل الوظيفة</a>
         </div>
       </div>
@@ -215,6 +225,11 @@ footer { padding: 36px 0 48px; color: var(--faint); font-size: 14px; }
 
   <section class="block" id="apply">
     <div class="wrap">
+      <div class="closed-box" id="closedBox" hidden>
+        <h2>اكتفينا حاليًا من التقديم</h2>
+        <p>شكرًا لاهتمامك بالانضمام لفريق Magmafy. وصلتنا طلبات كفاية في الوقت الحالي، وباب التقديم مقفول مؤقتًا. انتظر منا أي إعلان جديد عن التوظيف.</p>
+      </div>
+      <div id="formArea">
       <h2>فورم التقديم</h2>
       <form class="apply" id="form" novalidate>
         <div class="section-title">بياناتك</div>
@@ -329,6 +344,7 @@ footer { padding: 36px 0 48px; color: var(--faint); font-size: 14px; }
         </div>
         <p class="hint" id="copyNote" style="color:var(--faint);font-size:14px;margin-top:10px"></p>
       </div>
+      </div>
     </div>
   </section>
 </main>
@@ -419,13 +435,20 @@ footer { padding: 36px 0 48px; color: var(--faint); font-size: 14px; }
     btn.textContent = 'جارٍ الإرسال...';
     fetch(SHEET_ENDPOINT, {
       method: 'POST',
-      mode: 'no-cors',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(payload)
-    }).then(function () {
-      showResult('وصلنا طلبك', 'سنراجع إجاباتك ونرد عليك. تقدر كمان تبعتها على واتساب مع ملف الـ CV، فده بيسرّع المراجعة.');
+      body: JSON.stringify(payload),
+      credentials: 'omit',
+      referrerPolicy: 'no-referrer'
+    }).then(function (r) { return r.json(); }).then(function (j) {
+      if (j && j.ok) {
+        showResult('وصلنا طلبك', 'سنراجع إجاباتك ونرد عليك. تقدر كمان تبعتها على واتساب مع ملف الـ CV، فده بيسرّع المراجعة.');
+      } else if (j && j.error === 'closed') {
+        applyClosed(true);
+      } else {
+        showResult('لم يصلنا طلبك', 'حصلت مشكلة أثناء الإرسال. حاول تاني بعد شوية، أو ابعت الإجابات من الزر التالي على واتساب.');
+      }
     }).catch(function () {
-      showResult('تعذّر إرسال الطلب', 'تأكد من الإنترنت وحاول تاني، أو ابعت الإجابات من الزر التالي على واتساب.');
+      showResult('لم نتأكد من وصول طلبك', 'تأكد من الإنترنت وحاول تاني، أو ابعت الإجابات من الزر التالي على واتساب.');
     }).then(function () {
       btn.disabled = false;
       btn.textContent = 'إرسال الطلب';
@@ -435,6 +458,25 @@ footer { padding: 36px 0 48px; color: var(--faint); font-size: 14px; }
   Array.prototype.forEach.call(form.querySelectorAll('input,textarea,select'), function (el) {
     el.addEventListener('input', function () { el.classList.remove('invalid'); });
   });
+
+  function applyClosed(scroll) {
+    document.getElementById('formArea').hidden = true;
+    document.getElementById('closedBox').hidden = false;
+    document.getElementById('closedStrip').hidden = false;
+    document.getElementById('ctaRow').hidden = true;
+    document.getElementById('hiringChip').textContent = 'التقديم مغلق حاليًا';
+    var box = document.getElementById('closedBox');
+    if (scroll && box.scrollIntoView) box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  // Ask the server whether applications are open. If the check fails the form stays visible,
+  // and the server still refuses submissions while closed.
+  if (SHEET_ENDPOINT) {
+    fetch(SHEET_ENDPOINT + '?action=status', { credentials: 'omit', referrerPolicy: 'no-referrer' })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { if (j && j.ok && j.open === false) applyClosed(); })
+      .catch(function () {});
+  }
 
   copyBtn.addEventListener('click', function () {
     var text = msgEl.textContent;
