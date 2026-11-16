@@ -203,7 +203,7 @@ footer { padding: 36px 0 48px; color: var(--faint); font-size: 14px; }
       <h2>خطوات التقديم</h2>
       <ol class="steps">
         <li><strong>جاوب على الأسئلة</strong>الفورم تحت، حوالي ١٠ دقايق.</li>
-        <li><strong>ابعت الإجابات</strong>بضغطة تفتح واتساب برسالة جاهزة، وتبعت معها ملف الـ CV.</li>
+        <li><strong>ابعت الطلب</strong>بضغطة زر، ولو حبيت تبعته كمان على واتساب مع ملف الـ CV.</li>
         <li><strong>نراجع ونرد عليك</strong>المرشحين المناسبين نكلّمهم لمقابلة قصيرة.</li>
       </ol>
     </div>
@@ -307,16 +307,20 @@ footer { padding: 36px 0 48px; color: var(--faint); font-size: 14px; }
           <textarea id="more" name="more"></textarea>
         </div>
 
+        <div style="position:absolute;left:-9999px" aria-hidden="true">
+          <label for="website">لا تملأ هذا الحقل</label>
+          <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+        </div>
         <div class="err" id="formErr" role="alert"></div>
-        <div><button class="btn" type="submit">جهّز رسالة التقديم</button></div>
+        <div><button class="btn" type="submit" id="submitBtn">إرسال الطلب</button></div>
       </form>
 
       <div id="result" aria-live="polite">
-        <h3>رسالتك جاهزة</h3>
-        <p>راجع الإجابات، ثم افتح واتساب وأرسلها. لم يُرسل أي شيء بعد.</p>
+        <h3 id="resTitle">رسالتك جاهزة</h3>
+        <p id="resText">راجع الإجابات، ثم افتح واتساب وأرسلها.</p>
         <pre id="msg"></pre>
         <div class="cta-row">
-          <a class="btn" id="waLink" href="#" target="_blank" rel="noopener">فتح واتساب وإرسال الرسالة</a>
+          <a class="btn" id="waLink" href="#" target="_blank" rel="noopener">إرسال الإجابات على واتساب</a>
           <button class="btn ghost" type="button" id="copyBtn">نسخ الإجابات</button>
         </div>
         <p class="hint" id="copyNote" style="color:var(--faint);font-size:14px;margin-top:10px"></p>
@@ -331,7 +335,9 @@ footer { padding: 36px 0 48px; color: var(--faint); font-size: 14px; }
 
 <script>
 (function () {
-  var WHATSAPP = '966590873178'; // رقم الواتساب المعروض في موقع Magmafy، غيّره هنا لو لزم
+  var WHATSAPP = '966590873178'; // رقم الواتساب، غيّره هنا لو لزم
+  // رابط Web app الناتج من Google Apps Script (ينتهي بـ /exec). اتركه فارغًا لو الشيت لسه مش مربوط.
+  var SHEET_ENDPOINT = '';
   var form = document.getElementById('form');
   var result = document.getElementById('result');
   var msgEl = document.getElementById('msg');
@@ -388,8 +394,38 @@ footer { padding: 36px 0 48px; color: var(--faint); font-size: 14px; }
     var text = lines.join('\n');
     msgEl.textContent = text;
     waLink.href = 'https://wa.me/' + WHATSAPP + '?text=' + encodeURIComponent(text);
-    result.classList.add('show');
-    result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    function showResult(title, body) {
+      document.getElementById('resTitle').textContent = title;
+      document.getElementById('resText').textContent = body;
+      result.classList.add('show');
+      result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    if (!SHEET_ENDPOINT) {
+      showResult('رسالتك جاهزة', 'راجع الإجابات، ثم افتح واتساب وأرسلها. لم يُرسل أي شيء بعد.');
+      return;
+    }
+
+    var payload = {};
+    labels.forEach(function (p) { payload[p[0]] = val(p[0]); });
+    payload.website = form.elements.website.value;
+    var btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'جارٍ الإرسال...';
+    fetch(SHEET_ENDPOINT, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    }).then(function () {
+      showResult('وصلنا طلبك', 'سنراجع إجاباتك ونرد عليك. تقدر كمان تبعتها على واتساب مع ملف الـ CV، فده بيسرّع المراجعة.');
+    }).catch(function () {
+      showResult('تعذّر إرسال الطلب', 'تأكد من الإنترنت وحاول تاني، أو ابعت الإجابات من الزر التالي على واتساب.');
+    }).then(function () {
+      btn.disabled = false;
+      btn.textContent = 'إرسال الطلب';
+    });
   });
 
   Array.prototype.forEach.call(form.querySelectorAll('input,textarea,select'), function (el) {
