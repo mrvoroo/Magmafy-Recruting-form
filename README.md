@@ -13,5 +13,6 @@ On submit the form posts the answers to a Google Apps Script web app that append
 The Apps Script code and setup steps live in the `Magmafy-Applicants` repo (`apps-script/Code.gs`).
 
 ## Deploy
-Serve the folder as static files (GitHub Pages, Netlify, Vercel, or any host) and point a
-subdomain such as `careers.magmafyogp.com` at it.
+Hosted on GitHub Pages (branch `main`, folder `/`) at `careers.magmafyogp.com` (see the `CNAME` file).
+DNS: add a `CNAME` record `careers` pointing to `mrvoroo.github.io` at the domain's DNS provider.
+Then in the repo: Settings > Pages > Custom domain `careers.magmafyogp.com` and tick Enforce HTTPS.
