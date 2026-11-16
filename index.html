@@ -13,7 +13,7 @@
 <title>وظيفة ميديا باير في Magmafy</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@600;700&family=Space+Grotesk:wght@500;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* Layout idea: one dark column, a split hero (copy + facts card), then a single application form. Palette and type taken from magmafyogp.com. */
 :root {
@@ -32,8 +32,8 @@
   --blue: #4f5bd5;
   --grad: linear-gradient(100deg, #feda75 0%, #fa7e1e 26%, #d62976 58%, #962fbf 84%, #4f5bd5 108%);
   --grad-btn: linear-gradient(100deg, #fa7e1e 0%, #d62976 52%, #962fbf 100%);
-  --f-display: 'Space Grotesk', 'El Messiri', 'Tajawal', system-ui, sans-serif;
-  --f-body: 'Tajawal', 'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Tahoma, sans-serif;
+  --f-display: 'El Messiri', system-ui, -apple-system, 'Segoe UI', Tahoma, sans-serif;
+  --f-body: 'El Messiri', system-ui, -apple-system, 'Segoe UI', Tahoma, sans-serif;
   --radius: 22px;
   --radius-s: 14px;
   color-scheme: dark;
@@ -88,6 +88,7 @@ header.top .wrap { display: flex; align-items: center; justify-content: space-be
 .facts dd { margin: 0; }
 
 section.block { padding: 28px 0; }
+#formArea > h2 { font-size: clamp(24px, 3.4vw, 32px); margin-bottom: 24px; }
 section.block > .wrap > h2 { font-size: clamp(24px, 3.4vw, 32px); margin-bottom: 18px; }
 .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
 .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-s); padding: 22px; }
@@ -155,7 +156,7 @@ footer { padding: 36px 0 48px; color: var(--faint); font-size: 14px; }
     <div class="wrap">
       <div>
         <p class="eyebrow">Magmafy، وكالة نمو لمعارض الأثاث والديكور</p>
-        <h1>ندوّر على <span class="grad-text">ميديا باير</span> يحوّل الإنفاق الإعلاني إلى مبيعات.</h1>
+        <h1>نبحث عن <span class="grad-text">ميديا باير</span> يحوّل الإنفاق الإعلاني إلى مبيعات.</h1>
         <p class="lead">هتدير حملات إعلانية لعملاء من معارض الأثاث والديكور في السعودية والخليج. شغل بأرقام واضحة: كل ريال يُصرف له هدف، وكل حملة لها تقرير.</p>
         <div class="closed-strip" id="closedStrip" hidden>
           <b>اكتفينا حاليًا من التقديم.</b> انتظر منا أي إعلان جديد عن التوظيف.
