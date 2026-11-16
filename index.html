@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0e0716">
+<title>وظيفة ميديا باير في Magmafy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@600;700&family=Space+Grotesk:wght@500;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: one dark column, a split hero (copy + facts card), then a single application form. Palette and type taken from magmafyogp.com. */
+:root {
+  --bg: #0e0716;
+  --bg-2: #1a0f27;
+  --text: #fff4fa;
+  --muted: #c7b6d6;
+  --faint: #8f7ea3;
+  --border: rgba(255, 210, 236, 0.12);
+  --border-strong: rgba(255, 196, 226, 0.3);
+  --surface: rgba(30, 17, 44, 0.58);
+  --pink: #d62976;
+  --yellow: #feda75;
+  --orange: #fa7e1e;
+  --violet: #962fbf;
+  --blue: #4f5bd5;
+  --grad: linear-gradient(100deg, #feda75 0%, #fa7e1e 26%, #d62976 58%, #962fbf 84%, #4f5bd5 108%);
+  --grad-btn: linear-gradient(100deg, #fa7e1e 0%, #d62976 52%, #962fbf 100%);
+  --f-display: 'Space Grotesk', 'El Messiri', 'Tajawal', system-ui, sans-serif;
+  --f-body: 'Tajawal', 'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Tahoma, sans-serif;
+  --radius: 22px;
+  --radius-s: 14px;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--f-body);
+  font-size: 17px;
+  line-height: 1.75;
+  background-image:
+    radial-gradient(60% 40% at 85% -5%, rgba(214, 41, 118, 0.22), transparent 70%),
+    radial-gradient(50% 35% at 5% 10%, rgba(150, 47, 191, 0.2), transparent 70%);
+  background-repeat: no-repeat;
+}
+a { color: inherit; }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px); }
+h1, h2, h3 { font-family: var(--f-display); line-height: 1.25; text-wrap: balance; margin: 0; }
+p { margin: 0; }
+.grad-text { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+header.top { padding: 20px 0; }
+header.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.brand img { width: 44px; height: 44px; border-radius: 12px; display: block; }
+.brand span { font-family: var(--f-display); font-weight: 700; font-size: 24px; letter-spacing: 0.01em; }
+.chip { font-size: 14px; color: var(--muted); border: 1px solid var(--border-strong); border-radius: 99px; padding: 4px 14px; }
+
+.hero { padding: 36px 0 28px; }
+.hero .wrap { display: grid; grid-template-columns: 1.35fr 1fr; gap: 32px; align-items: start; }
+.eyebrow { color: var(--yellow); font-size: 15px; margin-bottom: 14px; }
+.hero h1 { font-size: clamp(30px, 5vw, 50px); font-weight: 700; }
+.hero p.lead { color: var(--muted); margin-top: 18px; max-width: 58ch; }
+.cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font: inherit; font-weight: 700; color: #fff; text-decoration: none; cursor: pointer;
+  background: var(--grad-btn); border: 0; border-radius: 99px; padding: 13px 28px;
+}
+.btn:hover { filter: brightness(1.08); }
+.btn.ghost { background: transparent; border: 1px solid var(--border-strong); color: var(--text); }
+.btn:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, a:focus-visible {
+  outline: 2px solid var(--yellow); outline-offset: 3px;
+}
+.facts { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+.facts h2 { font-size: 20px; margin-bottom: 14px; }
+.facts dl { margin: 0; display: grid; gap: 12px; }
+.facts dt { color: var(--faint); font-size: 14px; }
+.facts dd { margin: 0; }
+
+section.block { padding: 28px 0; }
+section.block > .wrap > h2 { font-size: clamp(24px, 3.4vw, 32px); margin-bottom: 18px; }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-s); padding: 22px; }
+.card h3 { font-size: 19px; margin-bottom: 10px; }
+.card ul { margin: 0; padding: 0 20px 0 0; color: var(--muted); }
+.card li { margin-bottom: 6px; }
+.steps { counter-reset: s; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; padding: 0; margin: 0; list-style: none; }
+.steps li { counter-increment: s; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-s); padding: 20px 22px; color: var(--muted); }
+.steps li::before { content: counter(s); display: block; font-family: var(--f-display); font-weight: 700; font-size: 28px; margin-bottom: 4px; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.steps strong { color: var(--text); display: block; }
+
+form.apply { background: var(--bg-2); border: 1px solid var(--border-strong); border-radius: var(--radius); padding: clamp(18px, 4vw, 34px); display: grid; gap: 22px; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.field { display: grid; gap: 8px; }
+.field > label, .field > .q { font-weight: 700; }
+.field .hint { color: var(--faint); font-size: 14px; margin-top: -4px; }
+input[type=text], input[type=url], input[type=tel], select, textarea {
+  width: 100%; font: inherit; color: var(--text); background: var(--bg);
+  border: 1px solid var(--border-strong); border-radius: 12px; padding: 12px 14px;
+}
+textarea { min-height: 96px; resize: vertical; }
+input::placeholder, textarea::placeholder { color: var(--faint); }
+input[dir=ltr], .ltr { direction: ltr; text-align: left; }
+.opts { display: flex; flex-wrap: wrap; gap: 10px; }
+.opts label { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--border-strong); border-radius: 99px; padding: 8px 16px; cursor: pointer; font-weight: 400; }
+.opts input { accent-color: var(--pink); }
+.opts label:has(input:checked) { border-color: var(--pink); background: rgba(214, 41, 118, 0.18); }
+.section-title { font-family: var(--f-display); font-size: 20px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.err { color: #ff9db8; font-size: 14px; min-height: 0; }
+.invalid { border-color: #ff6b94 !important; }
+
+#result { display: none; background: var(--surface); border: 1px solid var(--pink); border-radius: var(--radius); padding: 24px; margin-top: 22px; }
+#result.show { display: block; }
+#result h3 { font-size: 22px; margin-bottom: 8px; }
+#result pre { white-space: pre-wrap; word-break: break-word; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px; font-family: var(--f-body); font-size: 15px; color: var(--muted); max-height: 320px; overflow: auto; margin: 14px 0; }
+
+footer { padding: 36px 0 48px; color: var(--faint); font-size: 14px; }
+
+@media (max-width: 800px) {
+  .hero .wrap { grid-template-columns: 1fr; }
+  .row2 { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Magmafy">
+      <img src="logo-mark.webp" alt="" width="44" height="44">
+      <span class="grad-text">Magmafy</span>
+    </a>
+    <span class="chip">نحن نوظّف</span>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <p class="eyebrow">Magmafy، وكالة نمو لمعارض الأثاث والديكور</p>
+        <h1>ندوّر على <span class="grad-text">ميديا باير</span> يحوّل الإنفاق الإعلاني إلى مبيعات.</h1>
+        <p class="lead">هتدير حملات إعلانية لعملاء من معارض الأثاث والديكور في السعودية والخليج. شغل بأرقام واضحة: كل ريال يُصرف له هدف، وكل حملة لها تقرير.</p>
+        <div class="cta-row">
+          <a class="btn" href="#apply">قدّم الآن</a>
+          <a class="btn ghost" href="#role">تفاصيل الوظيفة</a>
+        </div>
+      </div>
+      <aside class="facts" aria-label="ملخص الوظيفة">
+        <h2>ملخص سريع</h2>
+        <dl>
+          <div><dt>المسمّى</dt><dd>Media Buyer</dd></div>
+          <div><dt>نوع العمل</dt><dd>عن بُعد، تعاون مع الوكالة</dd></div>
+          <div><dt>القنوات</dt><dd>Meta Ads و Google Ads، وTikTok عند الحاجة</dd></div>
+          <div><dt>السوق</dt><dd>السعودية والخليج</dd></div>
+          <div><dt>مطلوب منك</dt><dd>CV ورابط نتائج سابقة (Drive أو PDF)</dd></div>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <section class="block" id="role">
+    <div class="wrap">
+      <h2>إيه المطلوب منك؟</h2>
+      <div class="cols">
+        <div class="card">
+          <h3>مسؤولياتك</h3>
+          <ul>
+            <li>إطلاق وإدارة حملات المبيعات والـ Leads لعملاء الوكالة.</li>
+            <li>اختبار الإعلانات والجماهير والصفحات، وتحسين التكلفة لكل نتيجة.</li>
+            <li>ضبط التتبع (Pixel وConversions API) مع فريق المواقع.</li>
+            <li>تقرير أسبوعي بالأرقام وخطوة تالية واضحة لكل عميل.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>اللي بدوّر عليه</h3>
+          <ul>
+            <li>خبرة فعلية في إدارة ميزانيات إعلانية، مش بس الإعداد.</li>
+            <li>نتائج سابقة تقدر تعرضها بالأرقام.</li>
+            <li>فهم لسلوك المشتري الخليجي، وخبرة في الأثاث أو التجارة الإلكترونية ميزة.</li>
+            <li>التزام بالمواعيد وتواصل واضح.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>اللي هتاخده معانا</h3>
+          <ul>
+            <li>عملاء في مجال محدد، فتبني خبرة متخصصة.</li>
+            <li>إبداعات ومواقع جاهزة من الوكالة، فتركّز على الأداء.</li>
+            <li>مجال للنمو مع توسّع الوكالة في الخليج.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <h2>خطوات التقديم</h2>
+      <ol class="steps">
+        <li><strong>جاوب على الأسئلة</strong>الفورم تحت، حوالي ١٠ دقايق.</li>
+        <li><strong>ابعت الإجابات</strong>بضغطة تفتح واتساب برسالة جاهزة، وتبعت معها ملف الـ CV.</li>
+        <li><strong>نراجع ونرد عليك</strong>المرشحين المناسبين نكلّمهم لمقابلة قصيرة.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="block" id="apply">
+    <div class="wrap">
+      <h2>فورم التقديم</h2>
+      <form class="apply" id="form" novalidate>
+        <div class="section-title">بياناتك</div>
+        <div class="row2">
+          <div class="field">
+            <label for="name">الاسم الكامل</label>
+            <input type="text" id="name" name="name" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="phone">رقم الواتساب</label>
+            <input type="tel" id="phone" name="phone" dir="ltr" placeholder="+20 ..." autocomplete="tel" required>
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label for="country">بلد الإقامة</label>
+            <input type="text" id="country" name="country" required>
+          </div>
+          <div class="field">
+            <label for="years">سنوات الخبرة كميديا باير</label>
+            <select id="years" name="years" required>
+              <option value="">اختر</option>
+              <option>أقل من سنة</option>
+              <option>من ١ إلى ٣ سنوات</option>
+              <option>من ٣ إلى ٥ سنوات</option>
+              <option>أكثر من ٥ سنوات</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="section-title">خبرتك</div>
+        <div class="field">
+          <span class="q" id="q-platforms">المنصات اللي أدرتها بميزانية حقيقية</span>
+          <div class="opts" role="group" aria-labelledby="q-platforms">
+            <label><input type="checkbox" name="platforms" value="Meta Ads"> Meta Ads</label>
+            <label><input type="checkbox" name="platforms" value="Google Ads"> Google Ads</label>
+            <label><input type="checkbox" name="platforms" value="TikTok Ads"> TikTok Ads</label>
+            <label><input type="checkbox" name="platforms" value="Snapchat Ads"> Snapchat Ads</label>
+          </div>
+        </div>
+        <div class="field">
+          <label for="spend">أعلى ميزانية شهرية أدرتها (بالدولار تقريبًا)</label>
+          <input type="text" id="spend" name="spend" placeholder="مثال: ٥٬٠٠٠ دولار شهريًا" required>
+        </div>
+        <div class="field">
+          <label for="niche">اشتغلت على أثاث أو ديكور أو متاجر إلكترونية؟ احكِ لنا باختصار</label>
+          <textarea id="niche" name="niche" required></textarea>
+        </div>
+        <div class="field">
+          <label for="gulf">خبرتك مع السوق السعودي والخليجي</label>
+          <textarea id="gulf" name="gulf" placeholder="العملاء، الجمهور، المواسم، طرق الدفع..." required></textarea>
+        </div>
+        <div class="field">
+          <label for="result-text">أفضل نتيجة حققتها لعميل (الأرقام: الميزانية، المبيعات، ROAS أو التكلفة لكل Lead)</label>
+          <textarea id="result-text" name="result" required></textarea>
+        </div>
+        <div class="field">
+          <label for="tracking">إزاي بتتأكد إن التتبع سليم قبل ما تصرف أول ريال؟</label>
+          <textarea id="tracking" name="tracking" required></textarea>
+        </div>
+        <div class="field">
+          <label for="drop">حملة نتايجها نزلت فجأة بعد أسبوع جيد. إيه أول ٣ حاجات بتفحصها؟</label>
+          <textarea id="drop" name="drop" required></textarea>
+        </div>
+
+        <div class="section-title">الملفات والتفاصيل</div>
+        <div class="field">
+          <label for="cv">رابط الـ CV (Drive أو PDF)</label>
+          <input type="url" id="cv" name="cv" dir="ltr" placeholder="https://..." required>
+          <span class="hint">اضبط صلاحية الرابط على «أي شخص لديه الرابط»، وابعت الملف نفسه كمان في واتساب لو حبيت.</span>
+        </div>
+        <div class="field">
+          <label for="work">رابط نتائجك السابقة (Drive أو PDF)</label>
+          <input type="url" id="work" name="work" dir="ltr" placeholder="https://..." required>
+          <span class="hint">لقطات من حساباتك الإعلانية أو تقارير، مع إخفاء أسماء العملاء عند الحاجة.</span>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label for="avail">متى تقدر تبدأ؟</label>
+            <select id="avail" name="avail" required>
+              <option value="">اختر</option>
+              <option>فورًا</option>
+              <option>خلال أسبوعين</option>
+              <option>خلال شهر</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="rate">المقابل المتوقع (شهريًا أو نسبة من الإنفاق)</label>
+            <input type="text" id="rate" name="rate" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="more">أي شيء تحب نعرفه عنك (اختياري)</label>
+          <textarea id="more" name="more"></textarea>
+        </div>
+
+        <div class="err" id="formErr" role="alert"></div>
+        <div><button class="btn" type="submit">جهّز رسالة التقديم</button></div>
+      </form>
+
+      <div id="result" aria-live="polite">
+        <h3>رسالتك جاهزة</h3>
+        <p>راجع الإجابات، ثم افتح واتساب وأرسلها. لم يُرسل أي شيء بعد.</p>
+        <pre id="msg"></pre>
+        <div class="cta-row">
+          <a class="btn" id="waLink" href="#" target="_blank" rel="noopener">فتح واتساب وإرسال الرسالة</a>
+          <button class="btn ghost" type="button" id="copyBtn">نسخ الإجابات</button>
+        </div>
+        <p class="hint" id="copyNote" style="color:var(--faint);font-size:14px;margin-top:10px"></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">© Magmafy. بياناتك تُستخدم لأغراض التوظيف فقط. للاستفسار على واتساب: <span class="ltr" dir="ltr">+966 59 087 3178</span></div>
+</footer>
+
+<script>
+(function () {
+  var WHATSAPP = '966590873178'; // رقم الواتساب المعروض في موقع Magmafy، غيّره هنا لو لزم
+  var form = document.getElementById('form');
+  var result = document.getElementById('result');
+  var msgEl = document.getElementById('msg');
+  var waLink = document.getElementById('waLink');
+  var copyBtn = document.getElementById('copyBtn');
+  var copyNote = document.getElementById('copyNote');
+  var formErr = document.getElementById('formErr');
+
+  var labels = [
+    ['name', 'الاسم'], ['phone', 'واتساب'], ['country', 'البلد'], ['years', 'سنوات الخبرة'],
+    ['platforms', 'المنصات'], ['spend', 'أعلى ميزانية شهرية'], ['niche', 'خبرة الأثاث والديكور والمتاجر'],
+    ['gulf', 'خبرة السوق الخليجي'], ['result', 'أفضل نتيجة'], ['tracking', 'التأكد من التتبع'],
+    ['drop', 'أول ٣ فحوصات عند هبوط الأداء'], ['cv', 'رابط الـ CV'], ['work', 'رابط النتائج السابقة'],
+    ['avail', 'موعد البدء'], ['rate', 'المقابل المتوقع'], ['more', 'ملاحظات']
+  ];
+
+  function val(name) {
+    if (name === 'platforms') {
+      return Array.prototype.map.call(form.querySelectorAll('input[name=platforms]:checked'), function (i) { return i.value; }).join('، ');
+    }
+    var el = form.elements[name];
+    return el ? el.value.trim() : '';
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var bad = [];
+    Array.prototype.forEach.call(form.querySelectorAll('[required]'), function (el) {
+      var empty = !el.value.trim();
+      el.classList.toggle('invalid', empty);
+      if (empty) bad.push(el);
+    });
+    ['cv', 'work'].forEach(function (n) {
+      var el = form.elements[n];
+      if (el.value.trim() && !/^https?:\/\//i.test(el.value.trim())) {
+        el.classList.add('invalid');
+        if (bad.indexOf(el) === -1) bad.push(el);
+      }
+    });
+    if (!val('platforms')) {
+      bad.push(form.querySelector('input[name=platforms]'));
+    }
+    if (bad.length) {
+      formErr.textContent = 'في حقول ناقصة أو روابط غير صحيحة. الروابط لازم تبدأ بـ https:// وتأكد من اختيار منصة واحدة على الأقل.';
+      bad[0].focus();
+      return;
+    }
+    formErr.textContent = '';
+    var lines = ['طلب تقديم: وظيفة ميديا باير في Magmafy', ''];
+    labels.forEach(function (p) {
+      var v = val(p[0]);
+      if (v) lines.push('• ' + p[1] + ': ' + v);
+    });
+    var text = lines.join('\n');
+    msgEl.textContent = text;
+    waLink.href = 'https://wa.me/' + WHATSAPP + '?text=' + encodeURIComponent(text);
+    result.classList.add('show');
+    result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  Array.prototype.forEach.call(form.querySelectorAll('input,textarea,select'), function (el) {
+    el.addEventListener('input', function () { el.classList.remove('invalid'); });
+  });
+
+  copyBtn.addEventListener('click', function () {
+    var text = msgEl.textContent;
+    function done(ok) { copyNote.textContent = ok ? 'تم النسخ.' : 'تعذّر النسخ تلقائيًا. حدّد النص أعلاه وانسخه يدويًا.'; }
+    try {
+      navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(false); });
+    } catch (err) { done(false); }
+  });
+})();
+</script>
+</body>
+</html>
