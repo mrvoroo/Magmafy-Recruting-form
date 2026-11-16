@@ -101,14 +101,15 @@ section.block > .wrap > h2 { font-size: clamp(24px, 3.4vw, 32px); margin-bottom:
 .steps strong { color: var(--text); display: block; }
 
 form.apply { background: var(--bg-2); border: 1px solid var(--border-strong); border-radius: var(--radius); padding: clamp(18px, 4vw, 34px); display: grid; gap: 22px; }
-.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-.field { display: grid; gap: 8px; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+.field { display: grid; gap: 8px; align-content: start; }
 .field > label, .field > .q { font-weight: 700; }
 .field .hint { color: var(--faint); font-size: 14px; margin-top: -4px; }
 input[type=text], input[type=url], input[type=tel], input[type=email], select, textarea {
   width: 100%; font: inherit; color: var(--text); background: var(--bg);
   border: 1px solid var(--border-strong); border-radius: 12px; padding: 12px 14px;
 }
+input[type=text], input[type=url], input[type=tel], input[type=email], select { height: 56px; }
 textarea { min-height: 96px; resize: vertical; }
 input::placeholder, textarea::placeholder { color: var(--faint); }
 input[dir=ltr], .ltr { direction: ltr; text-align: left; }
