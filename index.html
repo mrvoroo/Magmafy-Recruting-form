@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#0e0716">
 <meta name="referrer" content="no-referrer">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src https://script.google.com https://script.googleusercontent.com; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.clarity.ms https://scripts.clarity.ms; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://www.google-analytics.com https://*.clarity.ms https://c.bing.com; connect-src https://script.google.com https://script.googleusercontent.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://*.clarity.ms https://c.bing.com; base-uri 'none'; form-action 'none'">
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
@@ -139,6 +139,20 @@ footer { padding: 36px 0 48px; color: var(--faint); font-size: 14px; }
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 </style>
+<script>
+/* Analytics: GA4 + Microsoft Clarity. No personal data is ever sent: events carry no field values. */
+window.dataLayer = window.dataLayer || [];
+function gtag(){ dataLayer.push(arguments); }
+gtag('js', new Date());
+gtag('config', 'G-6MM3HB60P9', { allow_google_signals: false, allow_ad_personalization_signals: false });
+var gaS = document.createElement('script'); gaS.async = true;
+gaS.src = 'https://www.googletagmanager.com/gtag/js?id=G-6MM3HB60P9';
+document.head.appendChild(gaS);
+(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","zd6jc9tbs6");
+window.clarity('consent');
+</script>
 </head>
 <body>
 
@@ -233,7 +247,7 @@ footer { padding: 36px 0 48px; color: var(--faint); font-size: 14px; }
       </div>
       <div id="formArea">
       <h2>فورم التقديم</h2>
-      <form class="apply" id="form" novalidate>
+      <form class="apply" id="form" novalidate data-clarity-mask="True">
         <div class="section-title">بياناتك</div>
         <div class="row2">
           <div class="field">
@@ -352,7 +366,7 @@ footer { padding: 36px 0 48px; color: var(--faint); font-size: 14px; }
 </main>
 
 <footer>
-  <div class="wrap">© Magmafy. بياناتك تُستخدم لأغراض التوظيف فقط.</div>
+  <div class="wrap">© Magmafy. بياناتك تُستخدم لأغراض التوظيف فقط. نستخدم أدوات تحليل مجهولة لقياس الزيارات، ولا نسجّل ما تكتبه في النموذج.</div>
 </footer>
 
 <script>
@@ -374,7 +388,12 @@ footer { padding: 36px 0 48px; color: var(--faint); font-size: 14px; }
     return el ? el.value.trim() : '';
   }
 
+  function track(n){ try { gtag('event', n); } catch(e){} }
+  var started = false;
+  form.addEventListener('focusin', function(){ if(!started){ started = true; track('form_start'); } });
+
   function showThanks() {
+    track('generate_lead');
     document.getElementById('form').hidden = true;
     result.classList.add('show');
     result.scrollIntoView({ behavior: 'smooth', block: 'start' });
