@@ -433,7 +433,7 @@ window.clarity('consent');
     return el ? el.value.trim() : '';
   }
 
-  function track(n){ try { gtag('event', n); } catch(e){} }
+  function track(n, o){ try { gtag('event', n, o || {}); } catch(e){} }
   var started = false;
   form.addEventListener('focusin', function(){ if(!started){ started = true; track('apply_start'); } });
 
@@ -470,6 +470,7 @@ window.clarity('consent');
     }
     if (bad.length) {
       formErr.textContent = t('في حقول ناقصة أو غير صحيحة. تأكد من الإيميل، والروابط لازم تبدأ بـ https://، واختار منصة واحدة على الأقل.');
+      track('form_error', { error_fields: bad.length });
       bad[0].focus();
       return;
     }
@@ -492,10 +493,13 @@ window.clarity('consent');
         showThanks();
       } else if (j && j.error === 'closed') {
         applyClosed(true);
+        track('form_closed');
       } else {
+        track('submit_error');
         formErr.textContent = t('حصلت مشكلة أثناء الإرسال. حاول تاني بعد شوية.');
       }
     }).catch(function () {
+      track('submit_error');
       formErr.textContent = t('لم نتأكد من وصول طلبك. تأكد من الإنترنت وحاول تاني.');
     }).then(function () {
       btn.disabled = false;
@@ -527,6 +531,7 @@ window.clarity('consent');
       .catch(function () {});
   }
 
+  document.getElementById('applyCta').addEventListener('click', function () { track('cta_click', { cta: 'apply_hero' }); });
   var initLang = 'ar';
   try {
     var q = /[?&]lang=(en|ar)/.exec(location.search);
