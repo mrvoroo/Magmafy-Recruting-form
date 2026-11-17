@@ -93,7 +93,7 @@ section.block > .wrap > h2 { font-size: clamp(24px, 3.4vw, 32px); margin-bottom:
 .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
 .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-s); padding: 22px; }
 .card h3 { font-size: 19px; margin-bottom: 10px; }
-.card ul { margin: 0; padding: 0 20px 0 0; color: var(--muted); }
+.card ul { margin: 0; padding: 0; padding-inline-start: 20px; color: var(--muted); }
 .card li { margin-bottom: 6px; }
 .steps { counter-reset: s; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; padding: 0; margin: 0; list-style: none; }
 .steps li { counter-increment: s; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-s); padding: 20px 22px; color: var(--muted); }
@@ -126,6 +126,10 @@ input[dir=ltr], .ltr { direction: ltr; text-align: left; }
 #result h3 { font-size: 22px; margin-bottom: 8px; }
 #result pre { white-space: pre-wrap; word-break: break-word; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px; font-family: var(--f-body); font-size: 15px; color: var(--muted); max-height: 320px; overflow: auto; margin: 14px 0; }
 
+.langbtn { font: inherit; font-size: 14px; color: var(--text); background: transparent; border: 1px solid var(--border-strong); border-radius: 99px; padding: 4px 16px; cursor: pointer; }
+.langbtn:hover { border-color: var(--pink); }
+.hdr-end { display: flex; align-items: center; gap: 10px; }
+html[dir=ltr] .hero h1 { letter-spacing: -0.01em; }
 footer { padding: 36px 0 48px; color: var(--faint); font-size: 14px; }
 
 .closed-strip { margin-top: 26px; border: 1px solid var(--pink); background: rgba(214, 41, 118, 0.14); border-radius: 14px; padding: 14px 18px; }
@@ -162,7 +166,7 @@ window.clarity('consent');
       <img src="logo-mark.webp" alt="" width="44" height="44">
       <span class="grad-text">Magmafy</span>
     </a>
-    <span class="chip" id="hiringChip">نحن نوظّف</span>
+    <div class="hdr-end"><span class="chip" id="hiringChip" data-js>نحن نوظّف</span><button class="langbtn" id="langBtn" type="button" data-js lang="en">English</button></div>
   </div>
 </header>
 
@@ -273,10 +277,10 @@ window.clarity('consent');
             <label for="years">سنوات الخبرة كميديا باير</label>
             <select id="years" name="years" required>
               <option value="">اختر</option>
-              <option>أقل من سنة</option>
-              <option>من ١ إلى ٣ سنوات</option>
-              <option>من ٣ إلى ٥ سنوات</option>
-              <option>أكثر من ٥ سنوات</option>
+              <option value="أقل من سنة">أقل من سنة</option>
+              <option value="من ١ إلى ٣ سنوات">من ١ إلى ٣ سنوات</option>
+              <option value="من ٣ إلى ٥ سنوات">من ٣ إلى ٥ سنوات</option>
+              <option value="أكثر من ٥ سنوات">أكثر من ٥ سنوات</option>
             </select>
           </div>
         </div>
@@ -332,9 +336,9 @@ window.clarity('consent');
             <label for="avail">متى تقدر تبدأ؟</label>
             <select id="avail" name="avail" required>
               <option value="">اختر</option>
-              <option>فورًا</option>
-              <option>خلال أسبوعين</option>
-              <option>خلال شهر</option>
+              <option value="فورًا">فورًا</option>
+              <option value="خلال أسبوعين">خلال أسبوعين</option>
+              <option value="خلال شهر">خلال شهر</option>
             </select>
           </div>
           <div class="field">
@@ -353,7 +357,7 @@ window.clarity('consent');
           <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
         </div>
         <div class="err" id="formErr" role="alert"></div>
-        <div><button class="btn" type="submit" id="submitBtn">إرسال الطلب</button></div>
+        <div><button class="btn" type="submit" id="submitBtn" data-js>إرسال الطلب</button></div>
       </form>
 
       <div id="result" aria-live="polite" tabindex="-1">
@@ -376,6 +380,47 @@ window.clarity('consent');
   var form = document.getElementById('form');
   var result = document.getElementById('result');
   var formErr = document.getElementById('formErr');
+
+  // ---- Language (Arabic default, English on demand). Option values stay Arabic so the sheet and scoring are unchanged.
+  var EN = {"نحن نوظّف": "We're hiring", "Magmafy، وكالة نمو لمعارض الأثاث والديكور": "Magmafy, a growth agency for furniture and décor showrooms", "نبحث عن": "We're looking for a", "ميديا باير": "Media Buyer", "يحوّل الإنفاق الإعلاني إلى مبيعات.": "who turns ad spend into sales.", "هتدير حملات إعلانية لعملاء من معارض الأثاث والديكور في السعودية والخليج. شغل بأرقام واضحة: كل ريال يُصرف له هدف، وكل حملة لها تقرير.": "You'll run ad campaigns for furniture and décor showroom clients in Saudi Arabia and the Gulf. Work that runs on clear numbers: every riyal spent has a purpose, and every campaign has a report.", "اكتفينا حاليًا من التقديم.": "We're not accepting applications right now.", "انتظر منا أي إعلان جديد عن التوظيف.": "Watch for our next hiring announcement.", "قدّم الآن": "Apply now", "تفاصيل الوظيفة": "Role details", "ملخص الوظيفة": "Role summary", "ملخص سريع": "At a glance", "المسمّى": "Title", "نوع العمل": "Work type", "عن بُعد، تعاون مع الوكالة": "Remote, working with the agency", "القنوات": "Channels", "Meta Ads و Google Ads، وTikTok عند الحاجة": "Meta Ads and Google Ads, plus TikTok when needed", "السوق": "Market", "السعودية والخليج": "Saudi Arabia and the Gulf", "مطلوب منك": "What we need from you", "CV ورابط نتائج سابقة (Drive أو PDF)": "CV and a link to past results (Drive or PDF)", "إيه المطلوب منك؟": "What will you do?", "مسؤولياتك": "Your responsibilities", "إطلاق وإدارة حملات المبيعات والـ Leads لعملاء الوكالة.": "Launch and manage sales and lead-generation campaigns for agency clients.", "اختبار الإعلانات والجماهير والصفحات، وتحسين التكلفة لكل نتيجة.": "Test ads, audiences and landing pages, and lower the cost per result.", "ضبط التتبع (Pixel وConversions API) مع فريق المواقع.": "Set up tracking (Pixel and Conversions API) with the web team.", "تقرير أسبوعي بالأرقام وخطوة تالية واضحة لكل عميل.": "A weekly report with the numbers and a clear next step for each client.", "اللي بدوّر عليه": "What we're looking for", "خبرة فعلية في إدارة ميزانيات إعلانية، مش بس الإعداد.": "Real experience managing ad budgets, not just campaign setup.", "نتائج سابقة تقدر تعرضها بالأرقام.": "Past results you can show in numbers.", "فهم لسلوك المشتري الخليجي، وخبرة في الأثاث أو التجارة الإلكترونية ميزة.": "An understanding of Gulf buyer behavior; experience in furniture or e-commerce is a plus.", "التزام بالمواعيد وتواصل واضح.": "Reliable with deadlines and clear communication.", "اللي هتاخده معانا": "What you'll get with us", "عملاء في مجال محدد، فتبني خبرة متخصصة.": "Clients in one defined niche, so you build specialist expertise.", "إبداعات ومواقع جاهزة من الوكالة، فتركّز على الأداء.": "Creatives and websites provided by the agency, so you focus on performance.", "مجال للنمو مع توسّع الوكالة في الخليج.": "Room to grow as the agency expands across the Gulf.", "خطوات التقديم": "How to apply", "جاوب على الأسئلة": "Answer the questions", "الفورم تحت، حوالي ١٠ دقايق.": "The form is below. It takes about 10 minutes.", "ابعت الطلب": "Submit your application", "بضغطة زر، وهيوصلك إيميل بتأكيد الاستلام.": "One click, and you'll get an email confirming we received it.", "نراجع ونرد عليك": "We review and reply", "المرشحين المناسبين نكلّمهم لمقابلة قصيرة.": "We contact suitable candidates for a short interview.", "اكتفينا حاليًا من التقديم": "We're not accepting applications right now", "شكرًا لاهتمامك بالانضمام لفريق Magmafy. وصلتنا طلبات كفاية في الوقت الحالي، وباب التقديم مقفول مؤقتًا. انتظر منا أي إعلان جديد عن التوظيف.": "Thank you for your interest in joining Magmafy. We've received enough applications for now, and applications are temporarily closed. Watch for our next hiring announcement.", "فورم التقديم": "Application form", "بياناتك": "About you", "الاسم الكامل": "Full name", "رقم الواتساب": "WhatsApp number", "الإيميل": "Email", "هنستخدم إيميلك للتواصل معاك في كل جديد بخصوص طلب التقديم.": "We'll use your email to keep you updated about your application.", "بلد الإقامة": "Country of residence", "سنوات الخبرة كميديا باير": "Years of experience as a media buyer", "اختر": "Select", "أقل من سنة": "Less than 1 year", "من ١ إلى ٣ سنوات": "1 to 3 years", "من ٣ إلى ٥ سنوات": "3 to 5 years", "أكثر من ٥ سنوات": "More than 5 years", "خبرتك": "Your experience", "المنصات اللي أدرتها بميزانية حقيقية": "Platforms you have managed with real budgets", "أعلى ميزانية شهرية أدرتها (بالدولار تقريبًا)": "Highest monthly budget you have managed (approx. in USD)", "مثال: ٥٬٠٠٠ دولار شهريًا": "e.g. $5,000 per month", "اشتغلت على أثاث أو ديكور أو متاجر إلكترونية؟ احكِ لنا باختصار": "Have you worked on furniture, décor or online stores? Tell us briefly", "خبرتك مع السوق السعودي والخليجي": "Your experience with the Saudi and Gulf market", "العملاء، الجمهور، المواسم، طرق الدفع...": "Clients, audiences, seasons, payment methods...", "أفضل نتيجة حققتها لعميل (الأرقام: الميزانية، المبيعات، ROAS أو التكلفة لكل Lead)": "Your best result for a client (numbers: budget, sales, ROAS or cost per lead)", "إزاي بتتأكد إن التتبع سليم قبل ما تصرف أول ريال؟": "How do you make sure tracking is correct before spending the first riyal?", "حملة نتايجها نزلت فجأة بعد أسبوع جيد. إيه أول ٣ حاجات بتفحصها؟": "A campaign's results suddenly dropped after a good week. What are the first 3 things you check?", "الملفات والتفاصيل": "Files and details", "رابط الـ CV (Drive أو PDF)": "CV link (Drive or PDF)", "اضبط صلاحية الرابط على «أي شخص لديه الرابط».": "Set the link permission to “Anyone with the link”.", "رابط نتائجك السابقة (Drive أو PDF)": "Past results link (Drive or PDF)", "لقطات من حساباتك الإعلانية أو تقارير، مع إخفاء أسماء العملاء عند الحاجة.": "Screenshots from your ad accounts or reports, with client names hidden where needed.", "متى تقدر تبدأ؟": "When can you start?", "فورًا": "Immediately", "خلال أسبوعين": "Within two weeks", "خلال شهر": "Within a month", "كام تتوقع تاخد على كل عميل؟": "How much do you expect per client?", "مثال: ١٥٠ دولار لكل عميل شهريًا": "e.g. $150 per client per month", "بنحاسب الميديا باير بمبلغ ثابت على كل عميل. اكتب الرقم والعملة.": "We pay media buyers a fixed amount per client. Write the number and currency.", "أي شيء تحب نعرفه عنك (اختياري)": "Anything else you would like us to know (optional)", "لا تملأ هذا الحقل": "Do not fill this field", "إرسال الطلب": "Submit application", "جارٍ الإرسال...": "Sending...", "وصلنا طلبك، شكرًا لك": "We received your application. Thank you", "شكرًا لوقتك واهتمامك بالانضمام لفريق Magmafy. لو بياناتك محققة المطلوب هنتواصل معاك في أقرب وقت. وهتوصلك رسالة تأكيد على إيميلك.": "Thank you for your time and interest in joining Magmafy. If your profile meets our requirements, we will contact you as soon as possible. A confirmation message will also arrive in your inbox.", "© Magmafy. بياناتك تُستخدم لأغراض التوظيف فقط. نستخدم أدوات تحليل مجهولة لقياس الزيارات، ولا نسجّل ما تكتبه في النموذج.": "© Magmafy. Your data is used for recruitment purposes only. We use anonymous analytics tools to measure visits, and we do not record what you type in the form.", "وظيفة ميديا باير في Magmafy": "Media Buyer job at Magmafy", "في حقول ناقصة أو غير صحيحة. تأكد من الإيميل، والروابط لازم تبدأ بـ https://، واختار منصة واحدة على الأقل.": "Some fields are missing or invalid. Check your email, links must start with https://, and choose at least one platform.", "حصلت مشكلة أثناء الإرسال. حاول تاني بعد شوية.": "Something went wrong while sending. Please try again shortly.", "لم نتأكد من وصول طلبك. تأكد من الإنترنت وحاول تاني.": "We couldn't confirm your application was received. Check your connection and try again.", "التقديم مغلق حاليًا": "Applications are closed"};
+  var LANG = 'ar', closedState = false, textNodes = [], attrEls = [];
+  function t(s) { return LANG === 'en' && EN[s] ? EN[s] : s; }
+  (function collect() {
+    var w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+    var n;
+    while ((n = w.nextNode())) {
+      var p = n.parentNode;
+      if (!n.nodeValue.trim() || p.closest('script,style,[data-js]')) continue;
+      textNodes.push({ n: n, ar: n.nodeValue });
+    }
+    Array.prototype.forEach.call(document.querySelectorAll('[placeholder],[aria-label]'), function (el) {
+      attrEls.push({ el: el, ph: el.getAttribute('placeholder'), al: el.getAttribute('aria-label') });
+    });
+  })();
+  var titleAr = document.title;
+  var chipEl = document.getElementById('hiringChip'), langBtn = document.getElementById('langBtn'), submitBtn = document.getElementById('submitBtn');
+  function setLang(l, fromUser) {
+    LANG = l === 'en' ? 'en' : 'ar';
+    var h = document.documentElement;
+    h.lang = LANG; h.dir = LANG === 'en' ? 'ltr' : 'rtl';
+    textNodes.forEach(function (o) {
+      var k = o.ar.trim();
+      o.n.nodeValue = (LANG === 'en' && EN[k]) ? o.ar.replace(k, EN[k]) : o.ar;
+    });
+    attrEls.forEach(function (o) {
+      if (o.ph && EN[o.ph]) o.el.setAttribute('placeholder', t(o.ph));
+      if (o.al && EN[o.al]) o.el.setAttribute('aria-label', t(o.al));
+    });
+    document.title = t(titleAr);
+    chipEl.textContent = t(closedState ? 'التقديم مغلق حاليًا' : 'نحن نوظّف');
+    if (!submitBtn.disabled) submitBtn.textContent = t('إرسال الطلب');
+    langBtn.textContent = LANG === 'en' ? 'العربية' : 'English';
+    langBtn.lang = LANG === 'en' ? 'ar' : 'en';
+    formErr.textContent = '';
+    try { localStorage.setItem('mg_lang', LANG); } catch (e) {}
+    if (fromUser) { try { gtag('event', 'language_change', { language: LANG }); } catch (e) {} }
+  }
+  langBtn.addEventListener('click', function () { setLang(LANG === 'en' ? 'ar' : 'en', true); });
 
   var fields = ['name', 'phone', 'email', 'country', 'years', 'platforms', 'spend', 'niche', 'gulf', 'result',
     'tracking', 'drop', 'cv', 'work', 'avail', 'rate', 'more'];
@@ -424,7 +469,7 @@ window.clarity('consent');
       bad.push(form.querySelector('input[name=platforms]'));
     }
     if (bad.length) {
-      formErr.textContent = 'في حقول ناقصة أو غير صحيحة. تأكد من الإيميل، والروابط لازم تبدأ بـ https://، واختار منصة واحدة على الأقل.';
+      formErr.textContent = t('في حقول ناقصة أو غير صحيحة. تأكد من الإيميل، والروابط لازم تبدأ بـ https://، واختار منصة واحدة على الأقل.');
       bad[0].focus();
       return;
     }
@@ -435,7 +480,7 @@ window.clarity('consent');
     payload.website = form.elements.website.value;
     var btn = document.getElementById('submitBtn');
     btn.disabled = true;
-    btn.textContent = 'جارٍ الإرسال...';
+    btn.textContent = t('جارٍ الإرسال...');
     fetch(SHEET_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -448,13 +493,13 @@ window.clarity('consent');
       } else if (j && j.error === 'closed') {
         applyClosed(true);
       } else {
-        formErr.textContent = 'حصلت مشكلة أثناء الإرسال. حاول تاني بعد شوية.';
+        formErr.textContent = t('حصلت مشكلة أثناء الإرسال. حاول تاني بعد شوية.');
       }
     }).catch(function () {
-      formErr.textContent = 'لم نتأكد من وصول طلبك. تأكد من الإنترنت وحاول تاني.';
+      formErr.textContent = t('لم نتأكد من وصول طلبك. تأكد من الإنترنت وحاول تاني.');
     }).then(function () {
       btn.disabled = false;
-      btn.textContent = 'إرسال الطلب';
+      btn.textContent = t('إرسال الطلب');
     });
   });
 
@@ -467,7 +512,8 @@ window.clarity('consent');
     document.getElementById('closedBox').hidden = false;
     document.getElementById('closedStrip').hidden = false;
     document.getElementById('ctaRow').hidden = true;
-    document.getElementById('hiringChip').textContent = 'التقديم مغلق حاليًا';
+    closedState = true;
+    document.getElementById('hiringChip').textContent = t('التقديم مغلق حاليًا');
     var box = document.getElementById('closedBox');
     if (scroll && box.scrollIntoView) box.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
@@ -480,6 +526,13 @@ window.clarity('consent');
       .then(function (j) { if (j && j.ok && j.open === false) applyClosed(); })
       .catch(function () {});
   }
+
+  var initLang = 'ar';
+  try {
+    var q = /[?&]lang=(en|ar)/.exec(location.search);
+    initLang = q ? q[1] : (localStorage.getItem('mg_lang') || 'ar');
+  } catch (e) {}
+  if (initLang === 'en') setLang('en');
 
 })();
 </script>
