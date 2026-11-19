@@ -503,6 +503,7 @@ window.clarity('consent');
     var payload = {};
     fields.forEach(function (n) { payload[n] = val(n); });
     payload.website = form.elements.website.value;
+    payload.lang = LANG === 'en' ? 'en' : 'ar'; // so replies and the confirmation email come in the applicant's language
     var btn = document.getElementById('submitBtn');
     btn.disabled = true;
     btn.textContent = t('جارٍ الإرسال...');
